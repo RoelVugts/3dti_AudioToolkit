@@ -25,6 +25,7 @@
 #include <HAHLSimulation/HearingLossSim.h>
 #include <Common/ErrorHandler.h>
 #include <cmath>
+#include "pmsis.h"
 
 //////////////////////////////////////////////
 
@@ -37,13 +38,15 @@ namespace HAHLSimulation {
 		enableHearingLossSimulation.right = true;
 		enableMultibandExpander.left = true;
 		enableMultibandExpander.right = true;
-		enableFrequencySmearing.left = false;
-		enableFrequencySmearing.right = false;
+		// enableFrequencySmearing.left = false;
+		// enableFrequencySmearing.right = false;
 
 		// Setup multiband expander calibration and number of bands
 		dBs_SPL_for_0_dBs_fs = Calibration_dBs_SPL_for_0_dBs_fs;
 		audiometries.left.assign(bandsNumber, 0.0f);
 		audiometries.right.assign(bandsNumber, 0.0f);
+
+		printf("Allocated audiometries\n\n");
 
 		// Setup temporal distortion
 		temporalDistortionSimulator.Setup(samplingRate, bufferSize, 
@@ -51,9 +54,11 @@ namespace HAHLSimulation {
 			DEFAULT_TEMPORAL_DISTORTION_AMOUNT_IN_MS, 
 			DEFAULT_TEMPORAL_DISTORTION_LEFTRIGHT_SYNCHRONICITY);
 
+		printf("Allocated Temporal distortion simulator\n\n");
+
 		// Setup frequency smearing
-		frequencySmearingBypassDelay.left.Setup(bufferSize);
-		frequencySmearingBypassDelay.right.Setup(bufferSize);
+		// frequencySmearingBypassDelay.left.Setup(bufferSize);
+		// frequencySmearingBypassDelay.right.Setup(bufferSize);
 	}
 
 	//////////////////////////////////////////////
@@ -93,21 +98,21 @@ namespace HAHLSimulation {
 		{
 			audiometries.left[bandIndex] = hearingLevel_dBHL;
 			multibandExpanders.left->SetAttenuationForOctaveBand(bandIndex, attenuation);
-			CMultibandExpander* multibandExpander = multibandExpanders.left.get();
+			CButterworthMultibandExpander* multibandExpander = multibandExpanders.left.get();
 			SetMultibandExpanderParameters(multibandExpander, bandIndex, audiometries.left, multibandExpanders.left->GetFilterGrouping());
 		}
 		if ((ear == Common::T_ear::RIGHT) || (ear == Common::T_ear::BOTH)) 
 		{
 			audiometries.right[bandIndex] = hearingLevel_dBHL;
 			multibandExpanders.right->SetAttenuationForOctaveBand(bandIndex, attenuation);
-			CMultibandExpander* multibandExpander = multibandExpanders.right.get();
+			CButterworthMultibandExpander* multibandExpander = multibandExpanders.right.get();
 			SetMultibandExpanderParameters(multibandExpander, bandIndex, audiometries.right, multibandExpanders.right->GetFilterGrouping());
 		}
 
 		
 	}
 
-	void CHearingLossSim::SetMultibandExpanderParameters(CMultibandExpander* multibandExpander, int bandIndex, TAudiometry audiometry, bool filterGrouping)
+	void CHearingLossSim::SetMultibandExpanderParameters(CButterworthMultibandExpander* multibandExpander, int bandIndex, TAudiometry audiometry, bool filterGrouping)
 	{
 
 		float threshold_dBSPL, threshold_dBFS, ratio;
@@ -328,7 +333,7 @@ namespace HAHLSimulation {
 	{
 		if ((ear == Common::T_ear::LEFT) || (ear == Common::T_ear::BOTH))
 		{
-			CMultibandExpander* multibandExpander = multibandExpanders.left.get();
+			CButterworthMultibandExpander* multibandExpander = multibandExpanders.left.get();
 			int numBands = multibandExpander->GetNumBands(filterGrouping);
 
 			for (size_t i = 0; i < numBands; i++)
@@ -336,7 +341,7 @@ namespace HAHLSimulation {
 		}
 		if ((ear == Common::T_ear::RIGHT) || (ear == Common::T_ear::BOTH))
 		{
-			CMultibandExpander* multibandExpander = multibandExpanders.right.get();
+			CButterworthMultibandExpander* multibandExpander = multibandExpanders.right.get();
 			int numBands = multibandExpander->GetNumBands(filterGrouping);
 
 			for (size_t i = 0; i < numBands; i++)
@@ -350,7 +355,7 @@ namespace HAHLSimulation {
 	{
 		if ((ear == Common::T_ear::LEFT) || (ear == Common::T_ear::BOTH))
 		{
-			CMultibandExpander* multibandExpander = multibandExpanders.left.get();
+			CButterworthMultibandExpander* multibandExpander = multibandExpanders.left.get();
 			int numBands = multibandExpander->GetNumBands(filterGrouping);
 
 			for (size_t i = 0; i < numBands; i++)
@@ -358,7 +363,7 @@ namespace HAHLSimulation {
 		}
 		if ((ear == Common::T_ear::RIGHT) || (ear == Common::T_ear::BOTH))
 		{
-			CMultibandExpander* multibandExpander = multibandExpanders.right.get();
+			CButterworthMultibandExpander* multibandExpander = multibandExpanders.right.get();
 			int numBands = multibandExpander->GetNumBands(filterGrouping);
 
 			for (size_t i = 0; i < numBands; i++)
@@ -379,36 +384,11 @@ namespace HAHLSimulation {
 		Common::CEarPair<CMonoBuffer<float>> asynchronyOutput;
 		asynchronyOutput.left.Fill(outputBuffer.left.GetNsamples(), 0.0f);
 		asynchronyOutput.right.Fill(outputBuffer.right.GetNsamples(), 0.0f);		
-		temporalDistortionSimulator.Process(inputBuffer, asynchronyOutput);
+		// temporalDistortionSimulator.Process(inputBuffer, asynchronyOutput);
+		asynchronyOutput = inputBuffer;
 
 		// Process frequency smearing
 		Common::CEarPair<CMonoBuffer<float>> smearingOutput = asynchronyOutput;
-		// Left:
-		if (enableFrequencySmearing.left && enableHearingLossSimulation.left)
-		{
-			frequencySmearers.left->Process(asynchronyOutput.left, smearingOutput.left);			
-			frequencySmearingBypassDelay.left.Process(smearingOutput.left, asynchronyOutput.left);	// Do a dummy process of the bypass delay buffer, to minimize clicks when enabling/disabling one ear
-		}
-		else
-		{
-			if (enableFrequencySmearing.right && enableHearingLossSimulation.right)
-				frequencySmearingBypassDelay.left.Process(asynchronyOutput.left, smearingOutput.left);	// If only left ear is bypassed
-			//else
-			//	smearingOutput.left = asynchronyOutput.left;	// If both ears are bypassed
-		}
-		// Right:
-		if (enableFrequencySmearing.right && enableHearingLossSimulation.right)
-		{
-			frequencySmearers.right->Process(asynchronyOutput.right, smearingOutput.right);
-			frequencySmearingBypassDelay.right.Process(smearingOutput.right, asynchronyOutput.right);	// Do a dummy process of the bypass delay buffer, to minimize clicks when enabling/disabling one ear
-		}
-		else
-		{
-			if (enableFrequencySmearing.left && enableHearingLossSimulation.left)
-				frequencySmearingBypassDelay.right.Process(asynchronyOutput.right, smearingOutput.right);	// If only right ear is bypassed
-			//else
-			//	smearingOutput.right = asynchronyOutput.right;	// If both ears are bypassed
-		}
 
 		// Process audiogram (multiband expanders)
 		Common::CEarPair<CMonoBuffer<float>> audiogramOutput;
@@ -517,18 +497,18 @@ namespace HAHLSimulation {
 
 	//////////////////////////////////////////////
 
-	shared_ptr<CFrequencySmearing> CHearingLossSim::GetFrequencySmearingSimulator(Common::T_ear ear)
-	{		
-		if (ear == Common::T_ear::LEFT)
-			return frequencySmearers.left;
-		if (ear == Common::T_ear::RIGHT)
-			return frequencySmearers.right;
+	// shared_ptr<CFrequencySmearing> CHearingLossSim::GetFrequencySmearingSimulator(Common::T_ear ear)
+	// {		
+	// 	if (ear == Common::T_ear::LEFT)
+	// 		return frequencySmearers.left;
+	// 	if (ear == Common::T_ear::RIGHT)
+	// 		return frequencySmearers.right;
 	
-		SET_RESULT(RESULT_ERROR_CASENOTDEFINED, "Attempt to get frequency smearing simulator for both or none ears");
-		return nullptr;
-	}
+	// 	SET_RESULT(RESULT_ERROR_CASENOTDEFINED, "Attempt to get frequency smearing simulator for both or none ears");
+	// 	return nullptr;
+	// }
 
-	CMultibandExpander * CHearingLossSim::GetMultibandExpander(Common::T_ear ear)
+	CButterworthMultibandExpander * CHearingLossSim::GetMultibandExpander(Common::T_ear ear)
 	{
 		return (ear == Common::T_ear::LEFT) ? multibandExpanders.left.get() : multibandExpanders.right.get();
 	}
@@ -597,7 +577,7 @@ namespace HAHLSimulation {
 			temporalDistortionSimulator.DisableTemporalDistortionSimulator(Common::T_ear::RIGHT);
 	}
 
-	void CHearingLossSim::SetMultibandExpander(Common::T_ear ear, shared_ptr<CMultibandExpander> multibandExpander)
+	void CHearingLossSim::SetMultibandExpander(Common::T_ear ear, gh_shared_ptr<CButterworthMultibandExpander> multibandExpander)
 	{
 		ASSERT(((ear == Common::T_ear::LEFT) || (ear == Common::T_ear::RIGHT)), RESULT_ERROR_CASENOTDEFINED, "Cannot set the same frequency smearer for both ears", "");
 
@@ -607,15 +587,15 @@ namespace HAHLSimulation {
 			multibandExpanders.right = multibandExpander;
 	}
 
-	void CHearingLossSim::SetFrequencySmearer(Common::T_ear ear, shared_ptr<CFrequencySmearing> frequencySmearer)
-	{
-		ASSERT(((ear == Common::T_ear::LEFT) || (ear == Common::T_ear::RIGHT)), RESULT_ERROR_CASENOTDEFINED, "Cannot set the same frequency smearer for both ears", "");
+	// void CHearingLossSim::SetFrequencySmearer(Common::T_ear ear, shared_ptr<CFrequencySmearing> frequencySmearer)
+	// {
+	// 	ASSERT(((ear == Common::T_ear::LEFT) || (ear == Common::T_ear::RIGHT)), RESULT_ERROR_CASENOTDEFINED, "Cannot set the same frequency smearer for both ears", "");
 
-		if (ear == Common::T_ear::LEFT)
-			frequencySmearers.left = frequencySmearer;
-		if (ear == Common::T_ear::RIGHT)
-			frequencySmearers.right = frequencySmearer;
-	}
+	// 	if (ear == Common::T_ear::LEFT)
+	// 		frequencySmearers.left = frequencySmearer;
+	// 	if (ear == Common::T_ear::RIGHT)
+	// 		frequencySmearers.right = frequencySmearer;
+	// }
 
 	//////////////////////////////////////////////
 
@@ -652,38 +632,38 @@ namespace HAHLSimulation {
 
 	//////////////////////////////////////////////
 
-	void CHearingLossSim::EnableFrequencySmearing(Common::T_ear ear)
-	{
-		if (ear == Common::T_ear::BOTH)
-		{
-			EnableFrequencySmearing(Common::T_ear::LEFT);
-			EnableFrequencySmearing(Common::T_ear::RIGHT);
-			return;
-		}
-		if (ear == Common::T_ear::LEFT) {
-			ASSERT(frequencySmearers.left.get(), RESULT_ERROR_NULLPOINTER, "Frequency smearing cannot be enabled for left ear because the frequency smearer has not been set", "");
-			enableFrequencySmearing.left = true;
-		}
-		if (ear == Common::T_ear::RIGHT) {
-			ASSERT(frequencySmearers.right.get(), RESULT_ERROR_NULLPOINTER, "Frequency smearing cannot be enabled for right ear because the frequency smearer has not been set", "");
-			enableFrequencySmearing.right = true;
-		}
-	}
+	// void CHearingLossSim::EnableFrequencySmearing(Common::T_ear ear)
+	// {
+	// 	if (ear == Common::T_ear::BOTH)
+	// 	{
+	// 		EnableFrequencySmearing(Common::T_ear::LEFT);
+	// 		EnableFrequencySmearing(Common::T_ear::RIGHT);
+	// 		return;
+	// 	}
+	// 	if (ear == Common::T_ear::LEFT) {
+	// 		ASSERT(frequencySmearers.left.get(), RESULT_ERROR_NULLPOINTER, "Frequency smearing cannot be enabled for left ear because the frequency smearer has not been set", "");
+	// 		enableFrequencySmearing.left = true;
+	// 	}
+	// 	if (ear == Common::T_ear::RIGHT) {
+	// 		ASSERT(frequencySmearers.right.get(), RESULT_ERROR_NULLPOINTER, "Frequency smearing cannot be enabled for right ear because the frequency smearer has not been set", "");
+	// 		enableFrequencySmearing.right = true;
+	// 	}
+	// }
 
 	//////////////////////////////////////////////
 
-	void CHearingLossSim::DisableFrequencySmearing(Common::T_ear ear)
-	{
-		if (ear == Common::T_ear::BOTH)
-		{
-			DisableFrequencySmearing(Common::T_ear::LEFT);
-			DisableFrequencySmearing(Common::T_ear::RIGHT);
-			return;
-		}
-		if (ear == Common::T_ear::LEFT)
-			enableFrequencySmearing.left = false;
-		if (ear == Common::T_ear::RIGHT)
-			enableFrequencySmearing.right = false;
-	}
+	// void CHearingLossSim::DisableFrequencySmearing(Common::T_ear ear)
+	// {
+	// 	if (ear == Common::T_ear::BOTH)
+	// 	{
+	// 		DisableFrequencySmearing(Common::T_ear::LEFT);
+	// 		DisableFrequencySmearing(Common::T_ear::RIGHT);
+	// 		return;
+	// 	}
+	// 	if (ear == Common::T_ear::LEFT)
+	// 		enableFrequencySmearing.left = false;
+	// 	if (ear == Common::T_ear::RIGHT)
+	// 		enableFrequencySmearing.right = false;
+	// }
 }// end namespace HAHLSimulation
 

@@ -24,7 +24,7 @@
 #define _USE_MATH_DEFINES // TODO: Test in windows! Might also be problematic for other platforms??
 #include <cmath>
 #include <Common/BiquadFilter.h>
-#include <iomanip>
+// #include <iomanip>
 
 #ifndef M_PI 
 #define M_PI 3.1415926535 
@@ -154,8 +154,8 @@ namespace Common {
 			return false;
 		}
 
-		try // -> To handle division by 0
-		{
+		// try // -> To handle division by 0
+		// {
 			double K = std::tan(M_PI * centerFreqHz / samplingFreq);
 
 			double norm = 1 / (1 + K / Q + K * K);
@@ -170,13 +170,13 @@ namespace Common {
 			SET_RESULT(RESULT_OK, "Bandpass filter coefficients of biquad filter succesfully set");
 
 			return true;
-		}
-		catch (exception e)
-		{
-			//SET_RESULT(RESULT_ERROR_INVALID_PARAM, "");
-			SET_RESULT(RESULT_ERROR_DIVBYZERO, "Division by zero setting coefficients for bandpass biquad filter");
-			return false;
-		}
+		// }
+		// catch (exception e)
+		// {
+		// 	//SET_RESULT(RESULT_ERROR_INVALID_PARAM, "");
+		// 	SET_RESULT(RESULT_ERROR_DIVBYZERO, "Division by zero setting coefficients for bandpass biquad filter");
+		// 	return false;
+		// }
 	}
 
 	//////////////////////////////////////////////
@@ -188,8 +188,8 @@ namespace Common {
 			return false;
 		}
 
-		try // -> To handle division by 0
-		{
+		// try // -> To handle division by 0
+		// {
 			double K = std::tan(M_PI * cutoffFreq / samplingFreq);
 
 			double norm = 1 / (1 + K / Q + K * K);
@@ -204,13 +204,13 @@ namespace Common {
 			//SET_RESULT(RESULT_OK, "LPF filter coefficients of biquad filter succesfully set");
 
 			return true;
-		}
-		catch (exception e)
-		{
-			//SET_RESULT(RESULT_ERROR_INVALID_PARAM, "");
-			SET_RESULT(RESULT_ERROR_DIVBYZERO, "Division by zero setting coefficients for LPF biquad filter");
-			return false;
-		}
+		// }
+		// catch (exception e)
+		// {
+		// 	//SET_RESULT(RESULT_ERROR_INVALID_PARAM, "");
+		// 	SET_RESULT(RESULT_ERROR_DIVBYZERO, "Division by zero setting coefficients for LPF biquad filter");
+		// 	return false;
+		// }
 	}
 
 	//////////////////////////////////////////////
@@ -222,8 +222,8 @@ namespace Common {
 			return false;
 		}
 
-		try // -> To handle division by 0
-		{
+		// try // -> To handle division by 0
+		// {
 			double K = std::tan(M_PI * cutoffFreq / samplingFreq);
 
 			double norm = 1 / (1 + K / Q + K * K);
@@ -238,13 +238,13 @@ namespace Common {
 			SET_RESULT(RESULT_OK, "HPF filter coefficients of biquad filter succesfully set");
 
 			return true;
-		}
-		catch (exception e)
-		{
-			//SET_RESULT(RESULT_ERROR_INVALID_PARAM, "");
-			SET_RESULT(RESULT_ERROR_DIVBYZERO, "Division by zero setting coefficients for HPF biquad filter");
-			return false;
-		}
+		// }
+		// catch (exception e)
+		// {
+		// 	//SET_RESULT(RESULT_ERROR_INVALID_PARAM, "");
+		// 	SET_RESULT(RESULT_ERROR_DIVBYZERO, "Division by zero setting coefficients for HPF biquad filter");
+		// 	return false;
+		// }
 	}
 
 	//////////////////////////////////////////////

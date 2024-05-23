@@ -24,9 +24,10 @@
 #ifndef _ERROR_HANDLER_H_
 #define _ERROR_HANDLER_H_
 
-#include <string>
-#include <mutex>
-#include <fstream>
+
+// #include <string>
+// #include <mutex>
+// #include <fstream>
 
 /*! \file */
 
@@ -35,7 +36,7 @@ using namespace std;
 /** \brief If SWITCH_ON_3DTI_ERRORHANDLER is undefined, the error handler is completely disabled, causing 0 overhead
 */
 
-#define SWITCH_ON_3DTI_ERRORHANDLER
+// #define SWITCH_ON_3DTI_ERRORHANDLER
 
 #ifdef _3DTI_ANDROID_ERRORHANDLER
 
@@ -501,7 +502,8 @@ namespace Common {
 	private:
 		// ATTRIBUTES:
 
-		mutex errorHandlerMutex;
+		// mutex errorHandlerMutex;
+		// int errorHandlerMutex;
 
 		// Last Result handling
 		TResultStruct lastResult;

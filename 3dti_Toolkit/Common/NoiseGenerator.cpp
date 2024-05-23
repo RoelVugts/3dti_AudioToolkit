@@ -23,6 +23,7 @@
 */
 
 #include "Common/NoiseGenerator.h"
+#include "randn.h"
 
 namespace Common {
 
@@ -31,13 +32,13 @@ namespace Common {
 	void CNoiseGenerator::Setup(float deviation)
 	{
 		// Init random number engine with random seed
-		std::random_device randomSeed;
-		randomEngine = std::default_random_engine(randomSeed());
+		// std::random_device randomSeed;
+		// randomEngine = std::default_random_engine(randomSeed());
 
 		// Setup normal distribution post-processor
 		standardDeviation = deviation;
 		//normalDistribution = std::normal_distribution<float>(DEFAULT_GAUSSIAN_MEAN, standardDeviation);
-		normalDistribution = std::normal_distribution<float>(DEFAULT_GAUSSIAN_MEAN, 1.0f);
+		// normalDistribution = std::normal_distribution<float>(DEFAULT_GAUSSIAN_MEAN, 1.0f);
 
 		// By default, disable autocorrelation filter and truncation
 		doAutocorrelation = false;
@@ -50,7 +51,7 @@ namespace Common {
 	{
 		standardDeviation = deviation;
 		//normalDistribution = std::normal_distribution<float>(DEFAULT_GAUSSIAN_MEAN, standardDeviation);
-		normalDistribution = std::normal_distribution<float>(DEFAULT_GAUSSIAN_MEAN, 1.0f);
+		// normalDistribution = std::normal_distribution<float>(DEFAULT_GAUSSIAN_MEAN, 1.0f);
 	}
 
 	/////////////////////////////////////////////////////
@@ -97,9 +98,11 @@ namespace Common {
 		for (int i = 0; i < outputBuffer.size(); i++)
 		{
 			float randomValue;
-			randomValue = normalDistribution(randomEngine);
+			// randomValue = normalDistribution(randomEngine);
+			randomValue = randn(0.0, 1.0);
 			randomValue = randomValue * standardDeviation;
 			outputBuffer[i] = randomValue;
+			outputBuffer[i] = 0.0f;
 		}
 
 		// Apply autocorrelation filter, if enabled

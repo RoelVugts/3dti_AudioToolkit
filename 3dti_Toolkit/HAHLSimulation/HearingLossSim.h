@@ -29,11 +29,12 @@
 #include <Common/Buffer.h>
 #include <Common/CommonDefinitions.h>
 #include <vector>
-#include <memory>
-#include <HAHLSimulation/MultibandExpander.h>
+// #include <memory>
+// #include <HAHLSimulation/MultibandExpander.h>
+#include "ButterworthMultibandExpander.h"
 #include <HAHLSimulation/TemporalDistortionSimulator.h>
-#include <HAHLSimulation/Graf3DTIFrequencySmearing.h>
-#include <HAHLSimulation/BaerMooreFrequencySmearing.h>
+// #include <HAHLSimulation/Graf3DTIFrequencySmearing.h>
+// #include <HAHLSimulation/BaerMooreFrequencySmearing.h>
 
 //#define DB_HL_TO_SPL_OFFSET 80.0f
 //#define DB_HL_TO_SPL_FACTOR	9.0f
@@ -191,9 +192,9 @@ namespace HAHLSimulation {
 		*	\retval frequencySmearingSimulator Pointer to the frequency smearing simulator
 		*   \eh On error, an error code is reported to the error handler.
 		*/
-		shared_ptr<CFrequencySmearing> GetFrequencySmearingSimulator(Common::T_ear ear);
+		// shared_ptr<CFrequencySmearing> GetFrequencySmearingSimulator(Common::T_ear ear);
 
-		CMultibandExpander* GetMultibandExpander(Common::T_ear ear);
+		CButterworthMultibandExpander* GetMultibandExpander(Common::T_ear ear);
 
 		/** \brief Enable hearing loss simulation (global switch for all internal processes)
 		*	\param[in] ear for which ear we want to enable hearing loss simulation
@@ -231,21 +232,21 @@ namespace HAHLSimulation {
 		*/
 		void DisableTemporalDistortion(Common::T_ear ear);
 
-		void SetMultibandExpander(Common::T_ear ear, shared_ptr<CMultibandExpander> multibandExpander);
+		void SetMultibandExpander(Common::T_ear ear, gh_shared_ptr<CButterworthMultibandExpander> multibandExpander);
 
-		void SetFrequencySmearer(Common::T_ear ear, shared_ptr<CFrequencySmearing> frequencySmearer);
+		// void SetFrequencySmearer(Common::T_ear ear, gh_shared_ptr<CFrequencySmearing> frequencySmearer);
 
 		/** \brief Enable frequency smearing simulation for one (or both) ear
 		*	\param[in] ear for which ear we want to enable frequency smearing simulation
 		*   \eh Nothing is reported to the error handler.
 		*/
-		void EnableFrequencySmearing(Common::T_ear ear);
+		// void EnableFrequencySmearing(Common::T_ear ear);
 
 		/** \brief Disable frequency smearing simulation for one (or both) ear
 		*	\param[in] ear for which ear we want to disable frequency smearing simulation
 		*   \eh Nothing is reported to the error handler.
 		*/
-		void DisableFrequencySmearing(Common::T_ear ear);
+		// void DisableFrequencySmearing(Common::T_ear ear);
 
 		//Calculate band attenuation corresponding to one hearing level in dBHL
 		float CalculateAttenuationFromDBHL(float dBHL);
@@ -261,13 +262,13 @@ namespace HAHLSimulation {
 		float CalculateDBHLFromAttenuation(float attenuation);
 
 
-		void SetMultibandExpanderParameters(CMultibandExpander* multibandExpander, int bandIndex, TAudiometry audiometry, bool filterGrouping);
+		void SetMultibandExpanderParameters(CButterworthMultibandExpander* multibandExpander, int bandIndex, TAudiometry audiometry, bool filterGrouping);
 
 
 	private:                                                           // PRIVATE ATTRIBUTES
 
 		// Multiband expander
-		Common::CEarPair<shared_ptr<CMultibandExpander>> multibandExpanders;	// Multiband expanders for both ears
+		Common::CEarPair<gh_shared_ptr<CButterworthMultibandExpander>> multibandExpanders;	// Multiband expanders for both ears
 		Common::CEarPair<TAudiometry> audiometries;					// Audiometries (hearing levels) for both ears, in dB SPL																	
 		float dBs_SPL_for_0_dBs_fs;									// Equivalence between 0 dBFS and X dBSPL, coming from eventual calibration	
 
@@ -275,13 +276,13 @@ namespace HAHLSimulation {
 		CTemporalDistortionSimulator temporalDistortionSimulator;	// Temporal Distortion simulator 
 
 		// Frequency smearing
-		Common::CEarPair<shared_ptr<CFrequencySmearing>> frequencySmearers;	// Frequency smearing processors for both ears
-		Common::CEarPair<Common::CDelay> frequencySmearingBypassDelay;		// Buffers for delay compensation when only one ear is affected by frequency smearing
+		// Common::CEarPair<shared_ptr<CFrequencySmearing>> frequencySmearers;	// Frequency smearing processors for both ears
+		// Common::CEarPair<Common::CDelay> frequencySmearingBypassDelay;		// Buffers for delay compensation when only one ear is affected by frequency smearing
 
 		// Switches for each effect, for each ear
 		Common::CEarPair<bool> enableHearingLossSimulation;				// Global switch for whole hearing loss simulation process, for each ear
 		Common::CEarPair<bool> enableMultibandExpander;					// Switches for multiband expander process, for each ear
-		Common::CEarPair<bool> enableFrequencySmearing;					// Switches for frequency smearing process, for each ear		
+		// Common::CEarPair<bool> enableFrequencySmearing;					// Switches for frequency smearing process, for each ear		
 	};
 }// end namespace HAHLSimulation
 #endif

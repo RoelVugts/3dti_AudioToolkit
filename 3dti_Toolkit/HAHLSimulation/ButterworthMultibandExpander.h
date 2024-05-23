@@ -26,13 +26,13 @@
 
 #include <HAHLSimulation/MultibandExpander.h>
 #include <Common/FiltersBank.h>
-#include <Common/GammatoneFilterBank.h>
+// #include <Common/GammatoneFilterBank.h>
 #include <Common/EnvelopeDetector.h>
 #include <Common/CommonDefinitions.h>
 #include <Common/BiquadFilter.h>
 #include <Common/DynamicExpanderMono.h>
 #include <vector>
-#include <memory>
+// #include <memory>
 
 // Default values for initialization of expanders
 #define DEFAULT_RATIO 1
@@ -47,7 +47,7 @@ namespace HAHLSimulation {
 	/** \details This class implements a multiband equalizer where each band has an	independent envelope follower and expander. 
 	*	This is used for simulation of non-linear attenuation in hearing loss.
 	*/
-	class CButterworthMultibandExpander : public CMultibandExpander
+	class CButterworthMultibandExpander
 	{
 	public:                                                             // PUBLIC METHODS
 
@@ -91,6 +91,12 @@ namespace HAHLSimulation {
 
 		float GetAttenuationForOctaveBand(int bandIndex);
 
+		/** \brief Get the frequency in Hertzs of the band whose index is passed
+		*	\param [in] bandIndex index of the band whose frequency is requiered
+		*	\retval frequency centre frequency in Hzs of the band
+		*   \eh On success, RESULT_OK is reported to the error handler.
+		*       On error, an error code is reported to the error handler.
+		*/
 		float GetOctaveBandFrequency(int bandIndex);
 
 		float GetBandFrequency(int bandIndex, bool filterGrouping);
@@ -141,4 +147,3 @@ namespace HAHLSimulation {
 	};
 }// end namespace HAHLSimulation
 #endif
-

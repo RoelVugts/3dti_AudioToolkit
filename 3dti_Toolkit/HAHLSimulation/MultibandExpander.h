@@ -25,13 +25,12 @@
 #define _CMULTIBAND_EXPANDER_H_
 
 #include <Common/FiltersBank.h>
-#include <Common/GammatoneFilterBank.h>
 #include <Common/EnvelopeDetector.h>
 #include <Common/CommonDefinitions.h>
 #include <Common/BiquadFilter.h>
 #include <Common/DynamicExpanderMono.h>
 #include <vector>
-#include <memory>
+// #include <memory>
 
 // Default values for initialization of expanders
 #define DEFAULT_RATIO 1

@@ -25,7 +25,8 @@
 
 #include <Common/BiquadFilter.h>
 #include <vector>
-#include <memory>
+// #include <memory>
+#include <gh_stdlib.h>
 
 //using namespace std;  //TODO: Try to avoid this
 
@@ -50,7 +51,7 @@ namespace Common {
 		*   \eh On success, RESULT_OK is reported to the error handler.
 		*       On error, an error code is reported to the error handler.
 		*/
-		shared_ptr <Common::CBiquadFilter> AddFilter();
+		gh_shared_ptr <Common::CBiquadFilter> AddFilter();
 
 		/** \brief Get one filter from the bank
 		*	\param [in] index ID of the filter within the bank
@@ -58,7 +59,7 @@ namespace Common {
 		*   \eh On success, RESULT_OK is reported to the error handler.
 		*       On error, an error code is reported to the error handler.
 		*/
-		shared_ptr <Common::CBiquadFilter> GetFilter(int index);
+		gh_shared_ptr <Common::CBiquadFilter> GetFilter(int index);
 
 		/** \brief Remove all previously created filters.
 		*   \eh On success, RESULT_OK is reported to the error handler.
@@ -83,7 +84,7 @@ namespace Common {
 
 	private:
 		// PRIVATE ATTRIBUTES
-		vector<shared_ptr<Common::CBiquadFilter>> filters;                      // Hold the filters in the Bank. 
+		vector<gh_shared_ptr<Common::CBiquadFilter>> filters;                      // Hold the filters in the Bank. 
 																		// Indexes indicate the order within the Bank.
 	};
 }// end namespace Common

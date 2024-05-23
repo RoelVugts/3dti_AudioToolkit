@@ -22,7 +22,7 @@
 #ifndef _3DTI_HAHL_Simulator_H_
 #define _3DTI_HAHL_Simulator_H_
 
-#include <HAHLSimulation/HearingAidSim.h>
+// #include <HAHLSimulation/HearingAidSim.h>
 #include <HAHLSimulation/HearingLossSim.h>
 
 #endif

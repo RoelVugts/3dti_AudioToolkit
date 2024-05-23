@@ -81,7 +81,8 @@ namespace Common {
 	{
 		if (assertMode != ASSERT_MODE_EMPTY)	// Alternative: put this before logging to file
 		{
-			lock_guard<mutex> lock(errorHandlerMutex);
+			// lock_guard<mutex> lock(errorHandlerMutex);
+			// if (errorHandlerMutex) return;
 
 			// Set result struct
 

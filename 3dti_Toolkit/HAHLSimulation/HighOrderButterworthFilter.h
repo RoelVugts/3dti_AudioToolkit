@@ -28,7 +28,8 @@
 
 #include <Common/Buffer.h>
 #include <Common/FiltersChain.h>
-#include <unordered_map>
+// #include <unordered_map>
+#include "coefficients.h"
 
 // Default values for high order filter parameters
 #define DEFAULT_SAMPLE_RATE 44100
@@ -51,39 +52,39 @@ struct THighOrderFilterParameters
 };
 
 // Hash key for high order filter parameters table lookup
-template<>
-struct std::hash<THighOrderFilterParameters>
-{	
-	// adapted from http://en.cppreference.com/w/cpp/utility/hash
-	size_t operator()(const THighOrderFilterParameters & key) const
-	{
-		size_t h1 = std::hash<int32_t>()(key.sampleRate);
-		size_t h2 = std::hash<int32_t>()(key.cutoffFrequency);
-		return h1 ^ (h2 << 1);  // exclusive or of hash functions for each int.
-	}
-};
+// template<>
+// struct std::hash<THighOrderFilterParameters>
+// {	
+// 	// adapted from http://en.cppreference.com/w/cpp/utility/hash
+// 	size_t operator()(const THighOrderFilterParameters & key) const
+// 	{
+// 		size_t h1 = std::hash<int32_t>()(key.sampleRate);
+// 		size_t h2 = std::hash<int32_t>()(key.cutoffFrequency);
+// 		return h1 ^ (h2 << 1);  // exclusive or of hash functions for each int.
+// 	}
+// };
 
 /** \brief Type definition for the high order filter coefficients table
 */
-typedef std::unordered_map<THighOrderFilterParameters, Common::TFiltersChainCoefficients> THighOrderFilterCoefficientsTable;
+// typedef std::unordered_map<THighOrderFilterParameters, Common::TFiltersChainCoefficients> THighOrderFilterCoefficientsTable;
 
 
 namespace HAHLSimulation {
 
 	// Hardcoded coefficients table for 6th order low pass filters
-	static void FillLowPassFilterOrder6CoefficientsTable();
-	static THighOrderFilterCoefficientsTable lowPassFilterOrder6Table;
-	static bool isLowPassFilterOrder6TableFilled = false;
+	// static void FillLowPassFilterOrder6CoefficientsTable();
+	// static THighOrderFilterCoefficientsTable lowPassFilterOrder6Table;
+	// static bool isLowPassFilterOrder6TableFilled = false;
 
 	// Hardcoded coefficients table for 4th order low pass filters
-	static void FillLowPassFilterOrder4CoefficientsTable();
-	static THighOrderFilterCoefficientsTable lowPassFilterOrder4Table;
-	static bool isLowPassFilterOrder4TableFilled = false;
+	// static void FillLowPassFilterOrder4CoefficientsTable();
+	// static THighOrderFilterCoefficientsTable lowPassFilterOrder4Table;
+	// static bool isLowPassFilterOrder4TableFilled = false;
 
 	// Hardcoded coefficients table for 4th order high pass filters
-	static void FillHighPassFilterOrder4CoefficientsTable();
-	static THighOrderFilterCoefficientsTable highPassFilterOrder4Table;
-	static bool isHighPassFilterOrder4TableFilled = false;
+	// static void FillHighPassFilterOrder4CoefficientsTable();
+	// static THighOrderFilterCoefficientsTable highPassFilterOrder4Table;
+	// static bool isHighPassFilterOrder4TableFilled = false;
 	
 	/** \details This class implements different types (LPF and HPF) of high order butterworth filters which coefficients are in hardcoded tables.
 	*/
@@ -123,8 +124,12 @@ namespace HAHLSimulation {
 
 	private:
 
-		THighOrderFilterCoefficientsTable* coefficientsTable;
+		// THighOrderFilterCoefficientsTable* coefficientsTable;
 		Common::CFiltersChain filtersChain;
+
+
+		// Added by GH
+		Common::T_filterType mode;
 	};
 }// end namespace HAHLSimulation
 #endif

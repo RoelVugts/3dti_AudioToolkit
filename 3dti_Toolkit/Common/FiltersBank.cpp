@@ -34,27 +34,27 @@ namespace Common {
 
 	//////////////////////////////////////////////
 		// Creates and add a new CBiquadFilter object to the Bank.
-	shared_ptr<Common::CBiquadFilter> CFiltersBank::AddFilter()
+	gh_shared_ptr<Common::CBiquadFilter> CFiltersBank::AddFilter()
 	{
-		try
-		{
-			shared_ptr<Common::CBiquadFilter> newFilter(new Common::CBiquadFilter());
+		// try
+		// {
+			gh_shared_ptr<Common::CBiquadFilter> newFilter(new Common::CBiquadFilter());
 			filters.push_back(newFilter);
 
 			SET_RESULT(RESULT_OK, "Filter added to filter bank succesfully");
 			return newFilter;
-		}
-		catch (std::bad_alloc& ba)
-		{
-			//SET_RESULT(RESULT_ERROR_BADALLOC, ba.what());
-			ASSERT(false, RESULT_ERROR_BADALLOC, ba.what(), "");
-			return nullptr;
-		}
+		// }
+		// catch (std::bad_alloc& ba)
+		// {
+		// 	//SET_RESULT(RESULT_ERROR_BADALLOC, ba.what());
+		// 	ASSERT(false, RESULT_ERROR_BADALLOC, ba.what(), "");
+		// 	return nullptr;
+		// }
 	}
 
 	//////////////////////////////////////////////
 		// Returns the <index>th filter in the Bank
-	shared_ptr<Common::CBiquadFilter> CFiltersBank::GetFilter(int index)
+	gh_shared_ptr<Common::CBiquadFilter> CFiltersBank::GetFilter(int index)
 	{
 		if (index < 0 || filters.size() <= index)
 		{
@@ -110,7 +110,7 @@ namespace Common {
 
 		for (std::size_t c = 0; c < filters.size(); c++)
 		{
-			shared_ptr<Common::CBiquadFilter> f = filters[c];
+			gh_shared_ptr<Common::CBiquadFilter> f = filters[c];
 			if (f != NULL)
 			{
 				f->Process(inBuffer, outBuffer, addResult);

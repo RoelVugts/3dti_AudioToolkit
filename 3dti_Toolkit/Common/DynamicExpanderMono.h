@@ -32,7 +32,7 @@ namespace Common {
 
 	/** \details This class applies dynamics expansion to mono audio buffers
 	*/
-	class CDynamicExpanderMono : public CDynamicProcessor
+	class CDynamicExpanderMono
 	{
 	public:                                                             // PUBLIC METHODS
 
@@ -51,6 +51,18 @@ namespace Common {
 		*   \eh Nothing is reported to the error handler.
 		*/
 		void Setup(int samplingRate, float ratio, float threshold, float attack, float release);
+
+		/** \brief Set the compression/expansion ratio
+		*   \param [in] _ratio Compression/expansion ratio
+		*   \eh Nothing is reported to the error handler.
+		*/
+		void SetRatio(float _ratio) { ratio = _ratio; }
+
+		/** \brief Set the threshold level
+		*	\param [in] _threshold threshold level in dBfs
+		*   \eh Nothing is reported to the error handler.
+		*/
+		void SetThreshold(float _threshold) { threshold = _threshold; }
 
 		/** \brief Set the attack time
 		*	\param [in] attack attack time, in milliseconds
@@ -82,13 +94,15 @@ namespace Common {
 		*/
 		float GetSlope();
 
-		//// TODO: The buffer should be mono and the leftChannel parameter should dissapear.
-		///**	 Apply dynamics expansion over an audio buffer
-		//*	param [in] buffer input and output buffer
-		//*	param [in] leftChannel channel to process (true=left; false=right)
-		//*	exception May throw errors to debugger
-		//*/
-		//void Process(CStereoBuffer<float> &buffer, bool leftChannel);
+		/** \brief Returns the compression/expansion ratio  
+		*	\retval ratio ratio
+		*/
+		float GetRatio() { return ratio; }
+
+		/** \brief Returns the threshold level in dBfs  
+		*	\retval threshold threshold, in dB
+		*/
+		float GetThreshold() { return threshold; }
 
 		/**	\brief Apply dynamics expansion over a mono audio buffer
 		*	\param [in, out] buffer input and output buffer
@@ -96,8 +110,16 @@ namespace Common {
 		*/
 		void Process(CMonoBuffer<float> &buffer);
 
-	private:                                                         // PUBLIC ATTRIBUTES
+		/** \brief Returns true when compression/expansion was applied in the last call to Process  
+		*	\retval isApplied true if compression/expansion was applied to the last processed buffer
+		*   \eh Nothing is reported to the error handler.
+		*/
+		bool IsDynamicProcessApplied() { return dynamicProcessApplied; }
 
+	private:                                                         // PUBLIC ATTRIBUTES
+		float ratio;                            // Compression Ratio 
+		float threshold;                        // Threshold, in dBfs
+		bool  dynamicProcessApplied;  // True when compression/expansion is applied in the last call to Process
 		CEnvelopeDetector envelopeDetector;			// Envelope detector used by the expander
 	};
 }//end namespace Common

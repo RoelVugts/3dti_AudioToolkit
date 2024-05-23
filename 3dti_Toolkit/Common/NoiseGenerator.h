@@ -26,7 +26,8 @@
 
 #include <Common/Buffer.h>
 #include <Common/BiquadFilter.h>
-#include <random>
+// #include <random>
+
 
 #define DEFAULT_GAUSSIAN_MEAN 0
 
@@ -90,8 +91,8 @@ namespace Common {
 
 	private:						// PRIVATE ATTRIBUTES
 		// Random generator with gaussian distribution
-		std::default_random_engine randomEngine;			// Random number generator
-		std::normal_distribution<float> normalDistribution;	// Normal distribution post-processor
+		// std::default_random_engine randomEngine;			// Random number generator
+		// std::normal_distribution<float> normalDistribution;	// Normal distribution post-processor
 		float standardDeviation;	// Standard deviation of gaussian distribution
 		
 		// Autocorrelation filter (optional)

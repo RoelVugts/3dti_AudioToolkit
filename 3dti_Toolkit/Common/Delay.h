@@ -25,7 +25,7 @@
 
 #include <Common/Buffer.h>
 #include <Common/FiltersChain.h>
-#include <Common/FarDistanceEffects.h>
+// #include <Common/FarDistanceEffects.h>
 
 namespace Common
 {
