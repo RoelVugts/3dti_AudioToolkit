@@ -27,7 +27,6 @@
 #include <cmath>
 #include <vector>
 #include <algorithm>
-// #include <cassert>
 #include <Common/ErrorHandler.h>
 // #include <Common/Magnitudes.h>
 //#include <initializer_list>
